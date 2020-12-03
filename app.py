@@ -6,10 +6,10 @@ import re
 import string
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-tfidf = TfidfVectorizer(max_features=500)
+
 app = Flask(__name__)
 model = pickle.load(open('model.pkl', 'rb'))
+tfidf = pickle.load(open('tfidf.pkl', 'rb'))
 
 @app.route('/')
 def home():
@@ -17,18 +17,14 @@ def home():
 
 @app.route('/predict',methods=['POST'])
 def predict():
-    sample_message = request.form.get('name')
-    print(sample_message)
+    sample_message = 'i agree, but hard to believe he does, given his strident opposition to ordination of women. #womensordinationÃ¢Â€Â¦'
     sample_message = re.sub("[^a-zA-Z]",' ', str(sample_message))
     sample_message = sample_message.lower()
-    sample_message_words = []
-    sample_message_words = [word for word in sample_message_words if not word in set(stopwords.words('english'))]
-    final_message = [wnl.lemmatize(word) for word in sample_message_words]
-    final_message = ' '.join(final_message)
-    final_features = tfidf.transform([final_message]).toarray()
+    final_features = tfidf.transform([sample_message]).toarray()
+    print(final_features)
     prediction = model.predict(final_features) 
 
-    return render_template('index.html', prediction_text='Tweet is $ {}'.format(output))
+    return render_template('index.html', prediction_text='Tweet is {}'.format(prediction))
 
 if __name__ == "__main__":
     app.run(debug=True)

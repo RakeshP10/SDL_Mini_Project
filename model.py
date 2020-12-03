@@ -80,8 +80,8 @@ from sklearn.ensemble import RandomForestClassifier
 rf = RandomForestClassifier(n_estimators=20)
 rf.fit(X_train, y_train)
 
-
 pickle.dump(rf, open('model.pkl','wb'))
-
+pickle.dump(tfidf, open('tfidf.pkl','wb'))
 model = pickle.load(open('model.pkl','rb'))
+pickle.load(open("tfidf.pkl", 'rb'))  
 print(model.predict(X_test))
